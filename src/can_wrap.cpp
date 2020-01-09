@@ -75,7 +75,12 @@ NAN_METHOD(CANWrap::Bind)
     assert(self);
     assert(!self->m_closed);
 
+#if NODE_MAJOR_VERSION <= 10
     Nan::Utf8String iface(info[0]->ToString());
+#else
+    v8::Local<v8::String> str = info[0]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>());
+    Nan::Utf8String iface(str);
+#endif
 
     auto ifr = ifreq();
     strcpy(ifr.ifr_name, *iface);
